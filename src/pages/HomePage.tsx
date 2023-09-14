@@ -1,5 +1,6 @@
-import { Card } from "react-bootstrap";
+import { Stack } from "react-bootstrap";
 import { useGetAllHeroesQuery } from "../store";
+import HeroCard from "../components/HeroCard";
 
 const HomePage = () => {
   const { data, isLoading } = useGetAllHeroesQuery();
@@ -10,17 +11,14 @@ const HomePage = () => {
         <p>Loading...</p>
       ) : (
         <>
-          {data?.map((item) => (
-            <Card
-              key={item._id}
-              style={{ width: "16rem" }}
-            >
-              <Card.Img src={item.images[0]} />
-              <Card.Body>
-                <Card.Title>{item.nickname}</Card.Title>
-              </Card.Body>
-            </Card>
-          ))}
+          <Stack
+            direction='horizontal'
+            gap={4}
+          >
+            {data?.map((hero) => (
+              <HeroCard hero={hero} />
+            ))}
+          </Stack>
         </>
       )}
     </>

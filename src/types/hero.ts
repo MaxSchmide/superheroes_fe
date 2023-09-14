@@ -7,3 +7,12 @@ export interface IHero {
   catch_phrase: string;
   images: string[];
 }
+
+export interface HeroData {
+  nickname: string;
+  real_name: string;
+  origin_description: string;
+  superpowers: string;
+  catch_phrase: string;
+  [key: string]: string;
+}

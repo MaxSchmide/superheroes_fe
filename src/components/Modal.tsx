@@ -1,5 +1,16 @@
-import { Modal, Button, Form, FloatingLabel } from "react-bootstrap";
-import { useState } from "react";
+import {
+  Modal,
+  Button,
+  Form,
+  FloatingLabel,
+  Row,
+  Col,
+  Spinner,
+} from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { useCreateHeroMutation, useUploadImagesMutation } from "../store";
+import { HeroData, IHero } from "../types/hero";
+import toast from "react-hot-toast";
 
 type Props = {
   show: boolean;
@@ -14,22 +25,76 @@ const initialData = {
   catch_phrase: "",
 };
 
+const fields = [
+  "nickname",
+  "real_name",
+  "origin_description",
+  "superpowers",
+  "catch_phrase",
+];
+
 const ModalForm = ({ show, onClose }: Props) => {
-  const [heroData, setHeroData] = useState(initialData);
+  const [heroData, setHeroData] = useState<HeroData>(initialData);
+  const [heroImages, setHeroImages] = useState<string[]>([]);
+  const [uploadImages, { data, isLoading }] = useUploadImagesMutation();
+  const [createHero, { isLoading: isCreating }] = useCreateHeroMutation();
 
   const handleCloseModal = () => {
-    setHeroData(initialData);
+    clearFields();
     onClose();
   };
 
   const handleHeroData = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    console.log(e.target.value);
     setHeroData((prevData) => ({
       ...prevData,
       [e.target.name]: e.target.value,
     }));
+  };
+
+  useEffect(() => {
+    if (data) setHeroImages((prev) => [...prev, ...data.links]);
+  }, [data]);
+
+  const handleUploadImages = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files!;
+    const data = new FormData();
+
+    for (const file of files) {
+      data.append("file", file);
+    }
+
+    uploadImages(data);
+  };
+
+  const handleSubmitForm = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (fields.some((field) => !heroData[field])) {
+      toast.error("All fields are required!");
+      return;
+    }
+
+    const newData: Omit<IHero, "_id"> = {
+      ...heroData,
+      superpowers: heroData.superpowers.split(","),
+      images: heroImages,
+    };
+
+    console.log(newData);
+
+    await createHero(newData)
+      .then(() => {
+        clearFields();
+        toast.success("Hero created!");
+      })
+      .catch(() => toast.error("Something went wrong!"));
+  };
+
+  const clearFields = () => {
+    setHeroData(initialData);
+    setHeroImages([]);
   };
 
   return (
@@ -45,36 +110,43 @@ const ModalForm = ({ show, onClose }: Props) => {
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group
-            className='mb-3'
-            controlId='nickname'
-          >
-            <FloatingLabel label='Nickname'>
-              <Form.Control
-                name='nickname'
-                onChange={handleHeroData}
-                value={heroData.nickname}
-                type='text'
-                placeholder='Enter nickname...'
-                required
-              />
-            </FloatingLabel>
-          </Form.Group>
-          <Form.Group
-            className='mb-3'
-            controlId='personName'
-          >
-            <FloatingLabel label='Person Name'>
-              <Form.Control
-                type='text'
-                name='real_name'
-                placeholder='Enter real name...'
-                required
-                onChange={handleHeroData}
-                value={heroData.real_name}
-              />
-            </FloatingLabel>
-          </Form.Group>
+          <Row>
+            <Col>
+              <Form.Group
+                className='mb-3'
+                controlId='nickname'
+              >
+                <FloatingLabel label='Nickname'>
+                  <Form.Control
+                    name='nickname'
+                    onChange={handleHeroData}
+                    value={heroData.nickname}
+                    type='text'
+                    placeholder='Enter nickname...'
+                    required
+                  />
+                </FloatingLabel>
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group
+                className='mb-3'
+                controlId='personName'
+              >
+                <FloatingLabel label='Person Name'>
+                  <Form.Control
+                    type='text'
+                    name='real_name'
+                    placeholder='Enter real name...'
+                    required
+                    onChange={handleHeroData}
+                    value={heroData.real_name}
+                  />
+                </FloatingLabel>
+              </Form.Group>
+            </Col>
+          </Row>
+
           <Form.Group
             className='mb-3'
             controlId='catchPhrase'
@@ -122,20 +194,57 @@ const ModalForm = ({ show, onClose }: Props) => {
             controlId='heroImage'
             className='mb-3'
           >
-            <Form.Label>Hero photos</Form.Label>
-            <Form.Control
-              required
-              type='file'
-              multiple
-              accept='image/*'
-            />
+            <Form.Label>Hero Images</Form.Label>
+            <div>
+              {heroImages &&
+                heroImages.map((img) => (
+                  <img
+                    src={img}
+                    width={60}
+                    height={60}
+                    alt='hero image'
+                    style={{ marginRight: "4px" }}
+                  />
+                ))}
+              <label
+                className='label'
+                htmlFor='heroImages'
+              >
+                {isLoading ? (
+                  <Spinner
+                    animation='border'
+                    role='status'
+                    size='sm'
+                  >
+                    <span className='visually-hidden'>Loading...</span>
+                  </Spinner>
+                ) : (
+                  "Upload"
+                )}
+              </label>
+              <input
+                type='file'
+                className='input'
+                onChange={handleUploadImages}
+                id='heroImages'
+                name='heroImages'
+                disabled={isLoading}
+              />
+            </div>
           </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer className='justify-content-between'>
-        <Button size='lg'>Create</Button>
+        <Button
+          disabled={isCreating || isLoading}
+          onClick={handleSubmitForm}
+          size='lg'
+        >
+          Create
+        </Button>
         <Button
           variant='danger'
+          size='lg'
           onClick={handleCloseModal}
         >
           Close
