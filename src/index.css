@@ -1,7 +1,7 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
 
 .min-h-screen {
-  min-height: 100vh;
+  min-height: 75vh;
 }
 
 .footer {
@@ -10,4 +10,8 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 -0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+.py-10 {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
 }
