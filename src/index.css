@@ -1,0 +1,16 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+.shadow-sm {
+  box-shadow: 0 3px 5px rgba(57, 63, 72, 0.3);
+}
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.footer {
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
