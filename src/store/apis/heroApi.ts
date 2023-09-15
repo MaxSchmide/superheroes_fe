@@ -9,7 +9,7 @@ type Params = {
 export const heroApi = createApi({
   reducerPath: "heroes",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://3.67.11.191:5000",
+    baseUrl: "https://superheroes-ix9q.onrender.com",
   }),
   tagTypes: ["Hero"],
   endpoints: (builder) => ({
