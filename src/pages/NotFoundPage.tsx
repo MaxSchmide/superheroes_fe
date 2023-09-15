@@ -1,7 +1,9 @@
-import React from "react";
-
 const NotFoundPage = () => {
-  return <div>NotFoundPage</div>;
+  return (
+    <div className='relative'>
+      <p className='abs-center'>Page not Found</p>
+    </div>
+  );
 };
 
 export default NotFoundPage;
