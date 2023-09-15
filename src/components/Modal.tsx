@@ -227,6 +227,7 @@ const ModalForm = ({ show, onClose }: Props) => {
                 onChange={handleUploadImages}
                 id='heroImages'
                 name='heroImages'
+                multiple
                 disabled={isLoading}
               />
             </div>

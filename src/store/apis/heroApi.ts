@@ -24,7 +24,7 @@ export const heroApi = createApi({
         method: "GET",
       }),
     }),
-    getHeroById: builder.query({
+    getHeroById: builder.query<IHero, string>({
       query: (id: string) => "/heroes/" + id,
     }),
     uploadImages: builder.mutation({

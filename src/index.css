@@ -142,3 +142,46 @@ a {
   pointer-events: none;
   opacity: 0.5;
 }
+
+.swiper__container {
+  height: 450px;
+}
+
+.swiper {
+  height: 100% !important;
+  width: 60vw;
+}
+
+.swiper__slide {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero__info > * {
+  padding: 0;
+  margin: 0;
+}
+
+.hero__info > h4,
+.hero__powers > h4 {
+  width: 20%;
+}
+.hero__info > p,
+.hero__powers > p {
+  width: 80%;
+}
+
+.hero__info,
+.hero__powers {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+
+.hero__powers {
+  align-items: start;
+}
