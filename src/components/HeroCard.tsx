@@ -1,22 +1,44 @@
 import { IHero } from "../types/hero";
 import { Card } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
-
+import classNames from "classnames";
+import { FiX } from "react-icons/fi";
 type Props = {
   hero: Pick<IHero, "nickname" | "_id" | "images">;
+  isFetching: boolean;
 };
 
-const HeroCard = ({ hero }: Props) => {
+const HeroCard = ({ hero, isFetching }: Props) => {
+  const handleDeleteHero = () => {
+    console.log(hero._id);
+  };
+
   return (
     <Card
-      className='card'
-      key={hero._id}
-      style={{ width: "16rem" }}
+      className={classNames("card relative", {
+        disabled: isFetching,
+      })}
+      style={{ width: "12rem", height: "20rem" }}
     >
-      <NavLink to={`/hero/${hero._id}`}>
-        <Card.Img src={hero.images[0]} />
+      <span
+        className='card__delete'
+        onClick={handleDeleteHero}
+      >
+        <FiX
+          width={16}
+          height={16}
+        />
+      </span>
+      <NavLink
+        to={"/hero/" + hero._id}
+        style={{ height: "80%" }}
+      >
+        <Card.Img
+          src={hero.images[0]}
+          style={{ height: "100%" }}
+        />
       </NavLink>
-      <Card.Body>
+      <Card.Body style={{ height: "20%" }}>
         <Card.Title>{hero.nickname}</Card.Title>
       </Card.Body>
     </Card>

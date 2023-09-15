@@ -16,3 +16,8 @@ export interface HeroData {
   catch_phrase: string;
   [key: string]: string;
 }
+
+export type HeroResponse = {
+  totalPages: number;
+  data: IHero[];
+};

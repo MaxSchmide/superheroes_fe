@@ -3,6 +3,7 @@ import App from "./App";
 import HomePage from "./pages/HomePage";
 import { Toaster } from "react-hot-toast";
 import HeroPage from "./pages/HeroPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 const Root = () => {
   return (
@@ -22,6 +23,10 @@ const Root = () => {
             element={<HeroPage />}
           />
         </Route>
+        <Route
+          path='*'
+          element={<NotFoundPage />}
+        />
       </Routes>
     </BrowserRouter>
   );

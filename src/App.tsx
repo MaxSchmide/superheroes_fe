@@ -8,7 +8,7 @@ const App = () => {
     <>
       <Header />
       <Container>
-        <main className='min-h-screen py-10'>
+        <main className='min-h-screen py-10 relative'>
           <Outlet />
         </main>
       </Container>

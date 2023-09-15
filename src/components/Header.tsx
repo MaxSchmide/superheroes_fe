@@ -2,6 +2,7 @@ import { Navbar, Container, Button } from "react-bootstrap";
 import logo from "../assets/logo.png";
 import { useState } from "react";
 import ModalForm from "./Modal";
+import { NavLink } from "react-router-dom";
 
 const Header = () => {
   const [showModal, setShowModal] = useState(false);
@@ -11,15 +12,14 @@ const Header = () => {
       <header className='shadow-sm'>
         <Navbar>
           <Container>
-            <Navbar.Brand href='/'>
+            <NavLink to='/'>
               <img
                 height={60}
                 width={60}
                 src={logo}
                 alt='Marvel and DC logotype'
               />
-            </Navbar.Brand>
-            <Navbar.Toggle />
+            </NavLink>
             <Navbar.Collapse className='justify-content-end'>
               <Button onClick={() => setShowModal(true)}>Add New</Button>
             </Navbar.Collapse>
