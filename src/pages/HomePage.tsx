@@ -1,55 +1,71 @@
-import { Stack, Row, Col } from "react-bootstrap";
-import { useGetAllHeroesQuery } from "../store";
+import { Col, Row, Stack } from "react-bootstrap";
+import { useSearchParams } from "react-router-dom";
 import HeroCard from "../components/HeroCard";
 import MyPagination from "../components/MyPagination";
-import { useSearchParams } from "react-router-dom";
+import { useGetAllHeroesQuery } from "../store";
+import { ErrorHandler } from "../components/ErrorHandler";
+import { Loader } from "../components/Loader";
+import { useEffect, useCallback } from "react";
 
 const HomePage = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
-  const perPage = Number(searchParams.get("perPage")) || 5;
-  const { data, isLoading, isFetching } = useGetAllHeroesQuery({
+  const perPage = 5;
+  const { data, isLoading, isFetching, isError } = useGetAllHeroesQuery({
     page,
     perPage,
   });
 
+  const changePage = useCallback(() => {
+    const params = new URLSearchParams(searchParams);
+
+    params.set("page", String(page - 1));
+
+    setSearchParams(params);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
+
+  useEffect(() => {
+    if (data && !data.heroes.length) {
+      changePage();
+    }
+  }, [data, changePage]);
+
   return (
-    <>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
-        <>
-          {data && (
-            <>
-              <Stack
-                direction='horizontal'
-                gap={4}
-                className='mb-5 wrap justify-content-center'
-              >
-                {data.data.map((hero) => (
-                  <HeroCard
-                    hero={hero}
-                    key={hero._id}
-                    isFetching={isFetching}
+    <ErrorHandler isError={isError}>
+      <Loader isLoading={isLoading}>
+        {data ? (
+          <>
+            <Stack
+              direction='horizontal'
+              gap={4}
+              className='mb-5 wrap justify-content-center'
+            >
+              {data.heroes.map((hero) => (
+                <HeroCard
+                  hero={hero}
+                  key={hero._id}
+                  isFetching={isFetching}
+                />
+              ))}
+            </Stack>
+            {data.totalHeroes > perPage && (
+              <Row className='justify-content-center'>
+                <Col md='auto'>
+                  <MyPagination
+                    total={data.totalHeroes}
+                    currentPage={page}
+                    perPage={perPage}
                   />
-                ))}
-              </Stack>
-              {data.totalPages > 1 && (
-                <Row className='justify-content-center'>
-                  <Col md='auto'>
-                    <MyPagination
-                      totalPages={data.totalPages}
-                      currentPage={page}
-                      perPage={perPage}
-                    />
-                  </Col>
-                </Row>
-              )}
-            </>
-          )}
-        </>
-      )}
-    </>
+                </Col>
+              </Row>
+            )}
+          </>
+        ) : (
+          <p>No data recived</p>
+        )}
+      </Loader>
+    </ErrorHandler>
   );
 };
 

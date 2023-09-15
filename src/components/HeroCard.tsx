@@ -3,20 +3,34 @@ import { Card } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import classNames from "classnames";
 import { FiX } from "react-icons/fi";
+import { useDeleteHeroMutation } from "../store";
+import toast from "react-hot-toast";
+
 type Props = {
   hero: Pick<IHero, "nickname" | "_id" | "images">;
   isFetching: boolean;
 };
 
 const HeroCard = ({ hero, isFetching }: Props) => {
+  const [deleteHero, { isLoading, isError, isSuccess }] =
+    useDeleteHeroMutation();
+
   const handleDeleteHero = () => {
-    console.log(hero._id);
+    deleteHero(hero._id);
   };
+
+  if (isError) {
+    toast.error("Error when deleting");
+  }
+
+  if (isSuccess) {
+    toast.success("Deleted");
+  }
 
   return (
     <Card
       className={classNames("card relative", {
-        disabled: isFetching,
+        disabled: isFetching || isLoading,
       })}
       style={{ width: "12rem", height: "20rem" }}
     >

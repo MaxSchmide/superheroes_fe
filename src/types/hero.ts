@@ -18,6 +18,6 @@ export interface HeroData {
 }
 
 export type HeroResponse = {
-  totalPages: number;
-  data: IHero[];
+  totalHeroes: number;
+  heroes: IHero[];
 };

@@ -82,8 +82,6 @@ const ModalForm = ({ show, onClose }: Props) => {
       images: heroImages,
     };
 
-    console.log(newData);
-
     await createHero(newData)
       .then(() => {
         clearFields();
@@ -199,6 +197,7 @@ const ModalForm = ({ show, onClose }: Props) => {
               {heroImages &&
                 heroImages.map((img) => (
                   <img
+                    key={img}
                     src={img}
                     width={60}
                     height={60}

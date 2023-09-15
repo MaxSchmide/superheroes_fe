@@ -1,61 +1,47 @@
-import { Pagination } from "react-bootstrap";
-import { getPagesArray } from "../utils/getPagesArray";
-import { Navigate } from "react-router-dom";
-import { SearchLink } from "./SearchLink";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import classNames from "classnames";
+import { Pagination } from "react-bootstrap";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { getPagesArray } from "../utils/getPagesArray";
+import { SearchLink } from "./SearchLink";
 
 type Props = {
-  totalPages: number;
+  total: number;
   currentPage: number;
   perPage: number;
 };
 
-const MyPagination = ({ totalPages, currentPage, perPage }: Props) => {
+const MyPagination = ({ total, currentPage, perPage }: Props) => {
+  const totalPages = Math.ceil(total / perPage);
   const items = getPagesArray(totalPages, currentPage);
-
-  if (currentPage > totalPages) {
-    return (
-      <Navigate
-        to='/404'
-        replace
-      />
-    );
-  }
 
   const nextPage = currentPage === totalPages ? currentPage : currentPage + 1;
   const prevPage = currentPage === 1 ? currentPage : currentPage - 1;
 
   return (
     <Pagination>
-      <li>
-        <SearchLink
-          params={{ page: prevPage.toString(), perPage: perPage.toString() }}
-          className='pagination__prev'
-          aria-disabled={currentPage === 1}
-        >
+      <li
+        className='pagination__prev'
+        aria-disabled={currentPage === 1}
+      >
+        <SearchLink params={{ page: prevPage.toString() }}>
           <FiChevronLeft />
         </SearchLink>
       </li>
       {items.map((page) => (
-        <li>
-          <SearchLink
-            params={{ page: page.toString(), perPage: perPage.toString() }}
-            key={page}
-            className={classNames("pagination__item", {
-              active: currentPage === page,
-            })}
-          >
-            {page}
-          </SearchLink>
+        <li
+          key={page}
+          className={classNames("pagination__item", {
+            active: currentPage === page,
+          })}
+        >
+          <SearchLink params={{ page: page.toString() }}>{page}</SearchLink>
         </li>
       ))}
-      <li>
-        <SearchLink
-          params={{ page: nextPage.toString(), perPage: perPage.toString() }}
-          className='pagination__next'
-          aria-disabled={currentPage === totalPages}
-        >
+      <li
+        className='pagination__next'
+        aria-disabled={currentPage === totalPages}
+      >
+        <SearchLink params={{ page: nextPage.toString() }}>
           <FiChevronRight />
         </SearchLink>
       </li>
