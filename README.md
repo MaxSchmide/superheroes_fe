@@ -25,10 +25,10 @@ To get started with the project, follow these steps:
    ```
 2. Start the development server:
 
-```bash
-yarn dev
-```
-This will start the development server using Vite, which offers fast development builds and hot module replacement.
+   ```bash
+   yarn dev
+   ```
+   This will start the development server using Vite, which offers fast development builds and hot module replacement.
 
 3. Access the development server in your browser at `http://localhost:5173`
 
