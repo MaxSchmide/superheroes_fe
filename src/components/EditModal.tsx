@@ -8,9 +8,14 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import { useUpdateHeroMutation, useUploadImagesMutation } from "../store";
+import {
+  useDeleteImageMutation,
+  useUpdateHeroMutation,
+  useUploadImagesMutation,
+} from "../store";
 import { HeroData, IHero } from "../types/hero";
 import toast from "react-hot-toast";
+import { FiX } from "react-icons/fi";
 
 type Props = {
   show: boolean;
@@ -37,7 +42,11 @@ const EditModal = ({ show, onClose, hero }: Props) => {
   const [heroData, setHeroData] = useState<HeroData>(initialData);
   const [heroImages, setHeroImages] = useState<string[]>(hero.images);
   const [uploadImages, { data, isLoading }] = useUploadImagesMutation();
+  const [deleteImage, { isLoading: isImageDeleting }] =
+    useDeleteImageMutation();
   const [updateHero, { isLoading: isUpdating }] = useUpdateHeroMutation();
+
+  const isDataChanging = isUpdating || isLoading || isImageDeleting;
 
   const handleCloseModal = () => {
     onClose();
@@ -52,10 +61,6 @@ const EditModal = ({ show, onClose, hero }: Props) => {
     }));
   };
 
-  useEffect(() => {
-    if (data) setHeroImages((prev) => [...prev, ...data.links]);
-  }, [data]);
-
   const handleUploadImages = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files!;
     const data = new FormData();
@@ -65,6 +70,12 @@ const EditModal = ({ show, onClose, hero }: Props) => {
     }
 
     uploadImages(data);
+  };
+
+  const handleDeleteImage = (src: string) => {
+    const id = String(src.split("/").pop());
+    deleteImage(id);
+    setHeroImages((prev) => prev.filter((img) => img !== src));
   };
 
   const handleSubmitForm = async (e: React.FormEvent) => {
@@ -88,6 +99,10 @@ const EditModal = ({ show, onClose, hero }: Props) => {
       })
       .catch(() => toast.error("Something went wrong!"));
   };
+
+  useEffect(() => {
+    if (data) setHeroImages((prev) => [...prev, ...data.links]);
+  }, [data]);
 
   return (
     <Modal
@@ -190,14 +205,20 @@ const EditModal = ({ show, onClose, hero }: Props) => {
             <div>
               {heroImages &&
                 heroImages.map((img) => (
-                  <img
-                    key={img}
-                    src={img}
-                    width={60}
-                    height={60}
-                    alt='hero image'
-                    style={{ marginRight: "4px" }}
-                  />
+                  <span className='relative image__preview'>
+                    <img
+                      key={img}
+                      src={img}
+                      width={60}
+                      height={60}
+                      alt='hero image'
+                      style={{ marginRight: "4px" }}
+                    />
+                    <FiX
+                      className='image__xmark'
+                      onClick={() => handleDeleteImage(img)}
+                    />
+                  </span>
                 ))}
               <label
                 className='label'
@@ -237,7 +258,7 @@ const EditModal = ({ show, onClose, hero }: Props) => {
           Close
         </Button>
         <Button
-          disabled={isUpdating || isLoading}
+          disabled={isDataChanging}
           onClick={handleSubmitForm}
           size='lg'
         >

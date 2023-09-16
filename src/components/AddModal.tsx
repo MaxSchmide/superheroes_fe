@@ -8,9 +8,14 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import { useCreateHeroMutation, useUploadImagesMutation } from "../store";
+import {
+  useCreateHeroMutation,
+  useDeleteImageMutation,
+  useUploadImagesMutation,
+} from "../store";
 import { HeroData, IHero } from "../types/hero";
 import toast from "react-hot-toast";
+import { FiX } from "react-icons/fi";
 
 type Props = {
   show: boolean;
@@ -37,7 +42,11 @@ const AddModal = ({ show, onClose }: Props) => {
   const [heroData, setHeroData] = useState<HeroData>(initialData);
   const [heroImages, setHeroImages] = useState<string[]>([]);
   const [uploadImages, { data, isLoading }] = useUploadImagesMutation();
+  const [deleteImage, { isLoading: isImageDeleting }] =
+    useDeleteImageMutation();
   const [createHero, { isLoading: isCreating }] = useCreateHeroMutation();
+
+  const isDataChanging = isCreating || isLoading || isImageDeleting;
 
   const handleCloseModal = () => {
     clearFields();
@@ -53,10 +62,6 @@ const AddModal = ({ show, onClose }: Props) => {
     }));
   };
 
-  useEffect(() => {
-    if (data) setHeroImages((prev) => [...prev, ...data.links]);
-  }, [data]);
-
   const handleUploadImages = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files!;
     const data = new FormData();
@@ -66,6 +71,12 @@ const AddModal = ({ show, onClose }: Props) => {
     }
 
     uploadImages(data);
+  };
+
+  const handleDeleteImage = (src: string) => {
+    const id = String(src.split("/").pop());
+    deleteImage(id);
+    setHeroImages((prev) => prev.filter((img) => img !== src));
   };
 
   const handleSubmitForm = async (e: React.FormEvent) => {
@@ -94,6 +105,10 @@ const AddModal = ({ show, onClose }: Props) => {
     setHeroData(initialData);
     setHeroImages([]);
   };
+
+  useEffect(() => {
+    if (data) setHeroImages((prev) => [...prev, ...data.links]);
+  }, [data]);
 
   return (
     <Modal
@@ -196,14 +211,20 @@ const AddModal = ({ show, onClose }: Props) => {
             <div>
               {heroImages &&
                 heroImages.map((img) => (
-                  <img
-                    key={img}
-                    src={img}
-                    width={60}
-                    height={60}
-                    alt='hero image'
-                    style={{ marginRight: "4px" }}
-                  />
+                  <span className='relative image__preview'>
+                    <img
+                      key={img}
+                      src={img}
+                      width={60}
+                      height={60}
+                      alt='hero image'
+                      style={{ marginRight: "4px" }}
+                    />
+                    <FiX
+                      className='image__xmark'
+                      onClick={() => handleDeleteImage(img)}
+                    />
+                  </span>
                 ))}
               <label
                 className='label'
@@ -243,7 +264,7 @@ const AddModal = ({ show, onClose }: Props) => {
           Close
         </Button>
         <Button
-          disabled={isCreating || isLoading}
+          disabled={isDataChanging}
           onClick={handleSubmitForm}
           size='lg'
         >

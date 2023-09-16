@@ -14,12 +14,20 @@ type UpdateData = {
 export const heroApi = createApi({
   reducerPath: "heroes",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://superheroes-ix9q.onrender.com",
+    // baseUrl: "https://superheroes-ix9q.onrender.com",
+    baseUrl: "http://localhost:5500",
   }),
   tagTypes: ["Hero"],
   endpoints: (builder) => ({
     getAllHeroes: builder.query<HeroResponse, Params>({
-      providesTags: ["Hero"],
+      providesTags: (res) => {
+        const tags = res?.heroes.map((hero) => ({
+          type: "Hero",
+          id: hero._id,
+        }));
+
+        return tags as [];
+      },
       query: ({ page, perPage }) => ({
         url: "/heroes",
         params: {
@@ -38,6 +46,12 @@ export const heroApi = createApi({
         url: "/images",
         method: "POST",
         body: files,
+      }),
+    }),
+    deleteImage: builder.mutation<void, string>({
+      query: (id) => ({
+        url: "/images/" + id,
+        method: "DELETE",
       }),
     }),
     createHero: builder.mutation<IHero, Omit<IHero, "_id">>({
@@ -73,4 +87,5 @@ export const {
   useDeleteHeroMutation,
   useGetHeroByIdQuery,
   useUpdateHeroMutation,
+  useDeleteImageMutation,
 } = heroApi;

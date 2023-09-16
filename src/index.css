@@ -198,6 +198,28 @@ a {
   margin-bottom: 5rem;
 }
 
+.image__preview img {
+  transition: opacity ease-in-out 0.2s;
+}
+
+.image__preview:hover img {
+  opacity: 0.5;
+}
+
+.image__preview:hover .image__xmark {
+  opacity: 1;
+}
+
+.image__xmark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  opacity: 0;
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
   .hero__info,
   .hero__powers {

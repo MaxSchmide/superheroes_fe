@@ -26,7 +26,7 @@ const HomePage = () => {
   }, [page]);
 
   useEffect(() => {
-    if (data && !data.heroes.length) {
+    if (data && data?.totalHeroes > 0 && !data.heroes.length) {
       changePage();
     }
   }, [data, changePage]);
@@ -34,7 +34,7 @@ const HomePage = () => {
   return (
     <ErrorHandler isError={isError}>
       <Loader isLoading={isLoading}>
-        {data ? (
+        {data && data.heroes.length ? (
           <>
             <Stack
               direction='horizontal'
