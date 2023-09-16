@@ -1,4 +1,4 @@
-import { IHero } from "../types/hero";
+import { PartialHero } from "../types/hero";
 import { Card } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import classNames from "classnames";
@@ -7,7 +7,7 @@ import { useDeleteHeroMutation } from "../store";
 import toast from "react-hot-toast";
 
 type Props = {
-  hero: Pick<IHero, "nickname" | "_id" | "images">;
+  hero: PartialHero;
   isFetching: boolean;
 };
 
@@ -48,7 +48,7 @@ const HeroCard = ({ hero, isFetching }: Props) => {
         style={{ height: "80%" }}
       >
         <Card.Img
-          src={hero.images[0]}
+          src={hero.image}
           style={{ height: "100%" }}
         />
       </NavLink>

@@ -17,7 +17,13 @@ export interface HeroData {
   [key: string]: string;
 }
 
-export type HeroResponse = {
+export interface PartialHero {
+  _id: string;
+  nickname: string;
+  image: string;
+}
+
+export interface HeroResponse {
   totalHeroes: number;
-  heroes: IHero[];
-};
+  heroes: PartialHero[];
+}
