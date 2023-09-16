@@ -159,6 +159,11 @@ a {
   align-items: center;
 }
 
+.hero__container {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
 .hero__info > * {
   padding: 0;
   margin: 0;
@@ -184,4 +189,20 @@ a {
 
 .hero__powers {
   align-items: start;
+}
+
+.hero__header {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 5rem;
+}
+
+@media (max-width: 768px) {
+  .hero__info,
+  .hero__powers {
+    flex-direction: column;
+    align-items: start;
+    margin-bottom: 3rem;
+  }
 }

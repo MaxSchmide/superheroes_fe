@@ -51,7 +51,7 @@ const HomePage = () => {
             </Stack>
             {data.totalHeroes > perPage && (
               <Row className='justify-content-center'>
-                <Col md='auto'>
+                <Col xs='auto'>
                   <MyPagination
                     total={data.totalHeroes}
                     currentPage={page}

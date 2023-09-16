@@ -6,6 +6,11 @@ type Params = {
   perPage: number;
 };
 
+type UpdateData = {
+  id: string;
+  data: Partial<IHero>;
+};
+
 export const heroApi = createApi({
   reducerPath: "heroes",
   baseQuery: fetchBaseQuery({
@@ -26,6 +31,7 @@ export const heroApi = createApi({
     }),
     getHeroById: builder.query<IHero, string>({
       query: (id: string) => "/heroes/" + id,
+      providesTags: (res) => [{ type: "Hero", id: res?._id }],
     }),
     uploadImages: builder.mutation({
       query: (files) => ({
@@ -49,6 +55,14 @@ export const heroApi = createApi({
       }),
       invalidatesTags: ["Hero"],
     }),
+    updateHero: builder.mutation<void, UpdateData>({
+      query: ({ id, data }) => ({
+        url: "/heroes/" + id,
+        body: data,
+        method: "PUT",
+      }),
+      invalidatesTags: (_, _2, args) => [{ type: "Hero", id: args.id }],
+    }),
   }),
 });
 
@@ -58,4 +72,5 @@ export const {
   useCreateHeroMutation,
   useDeleteHeroMutation,
   useGetHeroByIdQuery,
+  useUpdateHeroMutation,
 } = heroApi;

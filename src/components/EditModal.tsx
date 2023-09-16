@@ -8,21 +8,14 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import { useCreateHeroMutation, useUploadImagesMutation } from "../store";
+import { useUpdateHeroMutation, useUploadImagesMutation } from "../store";
 import { HeroData, IHero } from "../types/hero";
 import toast from "react-hot-toast";
 
 type Props = {
   show: boolean;
   onClose: () => void;
-};
-
-const initialData = {
-  nickname: "",
-  real_name: "",
-  origin_description: "",
-  superpowers: "",
-  catch_phrase: "",
+  hero: IHero;
 };
 
 const fields = [
@@ -33,14 +26,20 @@ const fields = [
   "catch_phrase",
 ];
 
-const ModalForm = ({ show, onClose }: Props) => {
+const EditModal = ({ show, onClose, hero }: Props) => {
+  const initialData = {
+    nickname: hero.nickname,
+    real_name: hero.real_name,
+    origin_description: hero.origin_description,
+    superpowers: hero.superpowers.join(","),
+    catch_phrase: hero.catch_phrase,
+  };
   const [heroData, setHeroData] = useState<HeroData>(initialData);
-  const [heroImages, setHeroImages] = useState<string[]>([]);
+  const [heroImages, setHeroImages] = useState<string[]>(hero.images);
   const [uploadImages, { data, isLoading }] = useUploadImagesMutation();
-  const [createHero, { isLoading: isCreating }] = useCreateHeroMutation();
+  const [updateHero, { isLoading: isUpdating }] = useUpdateHeroMutation();
 
   const handleCloseModal = () => {
-    clearFields();
     onClose();
   };
 
@@ -82,17 +81,12 @@ const ModalForm = ({ show, onClose }: Props) => {
       images: heroImages,
     };
 
-    await createHero(newData)
+    await updateHero({ id: hero._id, data: newData })
       .then(() => {
-        clearFields();
-        toast.success("Hero created!");
+        onClose();
+        toast.success("Updated!");
       })
       .catch(() => toast.error("Something went wrong!"));
-  };
-
-  const clearFields = () => {
-    setHeroData(initialData);
-    setHeroImages([]);
   };
 
   return (
@@ -236,22 +230,22 @@ const ModalForm = ({ show, onClose }: Props) => {
       </Modal.Body>
       <Modal.Footer className='justify-content-between'>
         <Button
-          disabled={isCreating || isLoading}
-          onClick={handleSubmitForm}
-          size='lg'
-        >
-          Create
-        </Button>
-        <Button
           variant='danger'
           size='lg'
           onClick={handleCloseModal}
         >
           Close
         </Button>
+        <Button
+          disabled={isUpdating || isLoading}
+          onClick={handleSubmitForm}
+          size='lg'
+        >
+          Edit
+        </Button>
       </Modal.Footer>
     </Modal>
   );
 };
 
-export default ModalForm;
+export default EditModal;

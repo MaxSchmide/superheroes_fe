@@ -1,11 +1,14 @@
 import { Navbar, Container, Button } from "react-bootstrap";
 import logo from "../assets/logo.png";
 import { useState } from "react";
-import ModalForm from "./Modal";
+import AddModal from "./AddModal";
 import { NavLink } from "react-router-dom";
 
 const Header = () => {
   const [showModal, setShowModal] = useState(false);
+
+  const handleCloseModal = () => setShowModal(false);
+  const handleShowModal = () => setShowModal(true);
 
   return (
     <>
@@ -21,14 +24,14 @@ const Header = () => {
               />
             </NavLink>
             <Navbar.Collapse className='justify-content-end'>
-              <Button onClick={() => setShowModal(true)}>Add New</Button>
+              <Button onClick={handleShowModal}>Add New</Button>
             </Navbar.Collapse>
           </Container>
         </Navbar>
       </header>
-      <ModalForm
+      <AddModal
         show={showModal}
-        onClose={() => setShowModal(false)}
+        onClose={handleCloseModal}
       />
     </>
   );
