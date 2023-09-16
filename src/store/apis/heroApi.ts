@@ -14,8 +14,7 @@ type UpdateData = {
 export const heroApi = createApi({
   reducerPath: "heroes",
   baseQuery: fetchBaseQuery({
-    // baseUrl: "https://superheroes-ix9q.onrender.com",
-    baseUrl: "http://localhost:5500",
+    baseUrl: "https://superheroes-ix9q.onrender.com",
   }),
   tagTypes: ["Hero"],
   endpoints: (builder) => ({
